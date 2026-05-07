@@ -206,7 +206,7 @@ def analyze_input(text: str, api_key: str, text_model: str = "moonshotai/Kimi-K2
 # ==============================
 # Helper: 生成卡片内容（第二阶段）
 # ==============================
-def generate_content(text: str, api_key: str, analysis: dict) -> dict:
+def generate_content(text: str, api_key: str, analysis: dict, text_model: str = "moonshotai/Kimi-K2.5") -> dict:
     card_type = analysis.get("card_type", "comparison")
     subjects = analysis.get("subjects", [])
     input_type = analysis.get("input_type", "detailed")
