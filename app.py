@@ -26,6 +26,19 @@ MODELS = [
     {"model": "Tongyi-MAI/Z-Image-Turbo", "name": "Tongyi"},
 ]
 
+# 可用的文本模型列表（已通过 API 测试）
+TEXT_MODELS = [
+    {"model": "moonshotai/Kimi-K2.5", "name": "Kimi-K2.5 (推荐)"},
+    {"model": "Qwen/Qwen3.5-27B", "name": "Qwen3.5-27B"},
+    {"model": "deepseek-ai/DeepSeek-V4-Flash", "name": "DeepSeek-V4-Flash"},
+    {"model": "MiniMax/MiniMax-M2.5", "name": "MiniMax-M2.5"},
+    {"model": "mistralai/Mistral-Large-Instruct-2407", "name": "Mistral-Large"},
+    {"model": "Qwen/Qwen3-235B-A22B-Instruct-2507", "name": "Qwen3-235B"},
+    {"model": "deepseek-ai/DeepSeek-V3.2", "name": "DeepSeek-V3.2"},
+    {"model": "ZhipuAI/GLM-5", "name": "GLM-5"},
+    {"model": "LLM-Research/c4ai-command-r-plus-08-2024", "name": "Command-R-Plus"},
+]
+
 # ==============================
 # 页面配置
 # ==============================
@@ -88,6 +101,21 @@ with st.sidebar:
         help="Tongyi 速度最快，FLUX 质量好，Qwen 细节丰富"
     )
 
+    text_model_idx = 0
+    st.session_state["selected_text_model_name"] = TEXT_MODELS[text_model_idx]["name"]
+
+    def on_text_model_change():
+        st.session_state["selected_text_model_name"] = st.session_state["text_model_selector"]
+
+    selected_text_model = st.selectbox(
+        "🤖 文本模型",
+        options=[m["name"] for m in TEXT_MODELS],
+        index=text_model_idx,
+        key="text_model_selector",
+        on_change=on_text_model_change,
+        help="用于生成对比文案，Kimi 效果稳定，DeepSeek 推理强"
+    )
+
     st.markdown("---")
     st.markdown("### 💡 使用流程")
     st.markdown("""
@@ -119,7 +147,7 @@ def detect_language(text: str) -> str:
 # ==============================
 # Helper: 分析用户输入（第一阶段）
 # ==============================
-def analyze_input(text: str, api_key: str) -> dict:
+def analyze_input(text: str, api_key: str, text_model: str = "moonshotai/Kimi-K2.5") -> dict:
     if not api_key:
         raise ValueError("请先在侧边栏填入 ModelScope API Key")
 
@@ -132,7 +160,7 @@ def analyze_input(text: str, api_key: str) -> dict:
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "moonshotai/Kimi-K2.5",
+        "model": text_model,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
@@ -233,7 +261,7 @@ def generate_content(text: str, api_key: str, analysis: dict) -> dict:
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "moonshotai/Kimi-K2.5",
+        "model": text_model,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
@@ -470,7 +498,10 @@ if st.button("🤖 AI 分析输入", type="primary", disabled=not user_input or 
     else:
         with st.spinner("🤖 AI 分析中..."):
             try:
-                analysis = analyze_input(user_input, api_key)
+                # 根据下拉框名称找到对应的 model id
+                text_model_name = st.session_state.get("selected_text_model_name", TEXT_MODELS[0]["name"])
+                text_model_id = next((m["model"] for m in TEXT_MODELS if m["name"] == text_model_name), TEXT_MODELS[0]["model"])
+                analysis = analyze_input(user_input, api_key, text_model_id)
                 st.session_state["analysis"] = analysis
                 st.session_state["detected_lang"] = detect_language(user_input)
                 st.success("✅ 分析完成！")
@@ -525,7 +556,7 @@ if "analysis" in st.session_state:
     if st.button("📝 生成内容", type="secondary"):
         with st.spinner("🤖 AI 生成中..."):
             try:
-                result = generate_content(user_input, api_key, analysis)
+                result = generate_content(user_input, api_key, analysis, text_model_id)
                 st.session_state["knowledge_data"] = result
                 st.success("✅ 内容生成成功！")
             except Exception as e:
