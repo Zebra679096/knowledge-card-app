@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Streamlit
+.streamlit/
+.cache/
+
+# Temp files
+*.tmp
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Downloaded cards (regenerate anyway)
+/tmp/
