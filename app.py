@@ -132,7 +132,7 @@ def analyze_input(text: str, api_key: str) -> dict:
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "ZhipuAI/GLM-5",
+        "model": "deepseek-ai/DeepSeek-V4-Flash",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
@@ -233,7 +233,7 @@ def generate_content(text: str, api_key: str, analysis: dict) -> dict:
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "ZhipuAI/GLM-5",
+        "model": "deepseek-ai/DeepSeek-V4-Flash",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
