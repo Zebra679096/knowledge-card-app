@@ -556,6 +556,8 @@ if "analysis" in st.session_state:
     if st.button("📝 生成内容", type="secondary"):
         with st.spinner("🤖 AI 生成中..."):
             try:
+                text_model_name = st.session_state.get("selected_text_model_name", TEXT_MODELS[0]["name"])
+                text_model_id = next((m["model"] for m in TEXT_MODELS if m["name"] == text_model_name), TEXT_MODELS[0]["model"])
                 result = generate_content(user_input, api_key, analysis, text_model_id)
                 st.session_state["knowledge_data"] = result
                 st.success("✅ 内容生成成功！")
