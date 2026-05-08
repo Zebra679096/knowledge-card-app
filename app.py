@@ -21,7 +21,7 @@ MODESCOPE_API_KEY = ""  # 用户侧边栏填入
 MODESCOPE_BASE_URL = "https://api-inference.modelscope.cn/"
 
 MODELS = [
-    {"model": "Qwen/Qwen-2-2/-Qwen2-2", "name": "Qwen"},
+    {"model": "Qwen/Qwen-Image", "name": "Qwen"},
     {"model": "MusePublic/489_ckpt_FLUX_1", "name": "FLUX"},
     {"model": "Tongyi-MAI/Z-Image-Turbo", "name": "Tongyi"},
 ]
